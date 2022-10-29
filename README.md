@@ -3,7 +3,8 @@ Gitlab Vars is a simple Docker image which can be used to create, update and rea
 project variables in your build pipeline.
 
 
-## How to use Gitlab Vars CLI
+### How to use Gitlab Vars CLI
+## CLI
 The Gitlab token can be changed with env variable `GITLAB_TOKEN`. 
 ```
 export GITLAB_TOKEN="*******************"
@@ -41,6 +42,12 @@ The default format is `%Y%m%d%H%M%S`
 ```
 gitlab-vars timestamp 4xxxxxxx BUILD
 ```
+### Gitlab CI/CD
+
+```
+gitlab-vars timestamp 4xxxxxxx BUILD
+```
+
 
 
 ## Development

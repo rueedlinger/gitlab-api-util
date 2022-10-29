@@ -12,6 +12,8 @@ DEFAULT_DATE_TIME_FORMAT = "%Y%m%d%H%M%S"
 def get_token():
     if "GITLAB_TOKEN" in os.environ:
         return os.environ["GITLAB_TOKEN"]
+    elif "CI_JOB_TOKEN" in os.environ:
+        return os.environ["CI_JOB_TOKEN"]
     else:
         raise UsageError("env GITLAB_TOKEN is not set")
 
@@ -19,6 +21,8 @@ def get_token():
 def get_base_url():
     if "GITLAB_URL_API" in os.environ:
         return os.environ["GITLAB_URL_API"]
+    elif "CI_API_V4_URL" in os.environ:
+        return os.environ["CI_API_V4_URL"]
     else:
         return DEFAULT_GITLAB_URL
 
