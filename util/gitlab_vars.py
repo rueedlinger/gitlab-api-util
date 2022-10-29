@@ -1,10 +1,12 @@
 import os
+from datetime import datetime
 
 import click
 import requests
 from click import UsageError
 
 DEFAULT_GITLAB_URL = "https://gitlab.com/api/v4"
+DEFAULT_DATE_TIME_FORMAT = "%Y%m%d%H%M%S"
 
 
 def get_token():
@@ -85,6 +87,18 @@ def incr(project, key):
         raise UsageError(f"Could not change value '{val}'")
 
     resp = put_var(project, key, new_val)
+    if resp.status_code != 200:
+        raise UsageError(f"Got status code {resp.status_code}")
+
+
+@cli.command()
+@click.argument('project')
+@click.argument('key')
+@click.argument('format', default=DEFAULT_DATE_TIME_FORMAT)
+def timestamp(project, key, format):
+    now = datetime.now()
+    date_time_str = now.strftime(format)
+    resp = put_var(project, key, date_time_str)
     if resp.status_code != 200:
         raise UsageError(f"Got status code {resp.status_code}")
 
