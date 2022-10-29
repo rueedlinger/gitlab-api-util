@@ -71,7 +71,6 @@ def info():
 @click.option('--project', default=get_project())
 @click.argument('key')
 def decr(project, key):
-
     if project is None:
         raise UsageError("Missing project id")
 
