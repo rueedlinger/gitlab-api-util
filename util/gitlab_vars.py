@@ -18,6 +18,15 @@ def get_token():
         raise UsageError("env GITLAB_TOKEN is not set")
 
 
+def get_project():
+    if "GITLAB_PROJECT_ID" in os.environ:
+        return os.environ["GITLAB_PROJECT_ID"]
+    elif "CI_PROJECT_ID" in os.environ:
+        return os.environ["CI_PROJECT_ID"]
+    else:
+        return None
+
+
 def get_base_url():
     if "GITLAB_URL_API" in os.environ:
         return os.environ["GITLAB_URL_API"]
@@ -59,9 +68,13 @@ def info():
 
 
 @cli.command()
-@click.argument('project')
+@click.option('--project', default=get_project())
 @click.argument('key')
 def decr(project, key):
+
+    if project is None:
+        raise UsageError("Missing project id")
+
     resp = get_var(project, key)
     if resp.status_code != 200:
         raise UsageError(f"Got status code {resp.status_code}")
@@ -77,9 +90,12 @@ def decr(project, key):
 
 
 @cli.command()
-@click.argument('project')
+@click.option('--project', default=get_project())
 @click.argument('key')
 def incr(project, key):
+    if project is None:
+        raise UsageError("Missing project id")
+
     resp = get_var(project, key)
     if resp.status_code != 200:
         raise UsageError(f"Got status code {resp.status_code}")
@@ -96,10 +112,12 @@ def incr(project, key):
 
 
 @cli.command()
-@click.argument('project')
+@click.option('--project', default=get_project())
 @click.argument('key')
-@click.argument('format', default=DEFAULT_DATE_TIME_FORMAT)
+@click.option('--format', default=DEFAULT_DATE_TIME_FORMAT)
 def timestamp(project, key, format):
+    if project is None:
+        raise UsageError("Missing project id")
     now = datetime.now()
     date_time_str = now.strftime(format)
     resp = put_var(project, key, date_time_str)
@@ -108,9 +126,11 @@ def timestamp(project, key, format):
 
 
 @cli.command()
-@click.argument('project')
+@click.option('--project', default=get_project())
 @click.argument('key')
 def get(project, key):
+    if project is None:
+        raise UsageError("Missing project id")
     resp = get_var(project, key)
     if resp.status_code != 200:
         raise UsageError(f"Got status code {resp.status_code}")
@@ -122,20 +142,24 @@ def get(project, key):
 
 
 @cli.command()
-@click.argument('project')
+@click.option('--project', default=get_project())
 @click.argument('key')
 @click.argument('value')
 def create(project, key, value):
+    if project is None:
+        raise UsageError("Missing project id")
     resp = post_var(project, key, value)
     if resp.status_code != 201:
         raise UsageError(f"Got status code {resp.status_code}")
 
 
 @cli.command()
-@click.argument('project')
+@click.option('--project', default=get_project())
 @click.argument('key')
 @click.argument('value')
 def update(project, key, value):
+    if project is None:
+        raise UsageError("Missing project id")
     resp = put_var(project, key, value)
     if resp.status_code != 200:
         raise UsageError(f"Got status code {resp.status_code}")
