@@ -73,8 +73,11 @@ update-build-vars:
     - gitlab-vars timestamp BUILD_TIME
 ```
 
-
 > **Note**: The variables `BUILD_COUNTER` and `BUILD_TIME` must already exist.
+
+![Gitlab variables](files/gitlab_vars.png "Gitlab Project variables")
+
+
 
 # Development
 ## Docker
