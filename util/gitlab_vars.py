@@ -11,20 +11,20 @@ DEFAULT_DATE_TIME_FORMAT = "%Y%m%d%H%M%S"
 
 # Gitalb CI/CD variables
 ENV_GITLAB_PROJECT_ID = "CI_PROJECT_ID"
-ENV_GITLAB_JOB_TOKEN = "CI_JOB_TOKEN"
+# ENV_GITLAB_JOB_TOKEN = "CI_JOB_TOKEN"
 ENV_GITLAB_API_URL = "CI_API_V4_URL"
 
 # custom variables
-ENV_CUSTOM_TOKEN = "GITLAB_VARS_PERSONAL_TOKEN"
-ENV_CUSTOM_PROJECT_ID = "GITLAB_VARS_PROJECT_ID"
-ENV_CUSTOM_API_URL = "GITLAB_VARS_API_URL"
+ENV_CUSTOM_TOKEN = "API_TOKEN"
+ENV_CUSTOM_PROJECT_ID = "API_PROJECT_ID"
+ENV_CUSTOM_API_URL = "API_URL"
 
 
 def get_token():
     if ENV_CUSTOM_TOKEN in os.environ:
         return "PRIVATE-TOKEN", os.environ[ENV_CUSTOM_TOKEN]
-    elif ENV_GITLAB_JOB_TOKEN in os.environ:
-        return "JOB-TOKEN", os.environ[ENV_GITLAB_JOB_TOKEN]
+    # elif ENV_GITLAB_JOB_TOKEN in os.environ:
+    #    return "JOB-TOKEN", os.environ[ENV_GITLAB_JOB_TOKEN]
     else:
         raise UsageError(f"Token not found. {ENV_CUSTOM_TOKEN} or {ENV_GITLAB_JOB_TOKEN} is not set")
 

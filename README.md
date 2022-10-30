@@ -5,26 +5,25 @@ project variables in your Gitlab build pipeline.
 
 ## How to use Gitlab Vars CLI
 ### Tokens
-The Gitlab personal access token can be changed with env variable `GITLAB_VARS_PERSONAL_TOKEN`.  
+To interact with the Gitlab API a personal access token is needed.
+The token can be set with env variable `API_TOKEN`.  
 ```
-export GITLAB_VARS_PERSONAL_TOKEN="*******************"
+export API_TOKEN="*******************"
 ```
-If the personal 
-access token is not set the cli will look for a Gitlab job token (`CI_JOB_TOKEN`).
 
 ### API
-As default teh Gitlab API url is set to `https://gitlab.com/api/v4` or the CI/CD variable `CI_API_V4_URL`. 
-If you want to use another URL you can change it with the env variable `GITLAB_VARS_API_URL`. 
+As default the Gitlab API url is set to `https://gitlab.com/api/v4` or when present to the CI/CD variable `CI_API_V4_URL`. 
+If you want to use another URL you can change it with the env variable `API_URL`. 
 
 
 ```
-export GITLAB_VARS_API_URL="https://gitlab.com/api/v4"
+export API_URL="https://gitlab.com/api/v4"
 ```
 
 ### Project ID
 For most of the command you can specify the Gitlab project id (`--project 4xxxxxxx`) as an option.
-If you do not set the project id the cli will check if the env variable `CI_PROJECT_ID` or `GITLAB_VARS_PROJECT_ID` 
-is set adn use this value as project id.
+If you do not set the project id the cli will check if the env variable `CI_PROJECT_ID` or `API_PROJECT_ID` 
+is set and use this value as project id.
 
 ```
 gitlab-vars get FOO --project 4xxxxxxx
@@ -59,16 +58,14 @@ gitlab-vars timestamp BUILD
 ```
 
 ### Gitlab CI/CD Pipeline
-The following Gitalb CI/CD pipeline will update the project variables `BUILD_COUNTER` and `BUILD_TIME`.
+The following Gitalb CI/CD pipeline (`.gitlab-ci.yml `) will update the project variables `BUILD_COUNTER` and `BUILD_TIME`.
 In this example the job token `CI_JOB_TOKEN`, project id `$CI_PROJECT_ID` and API URL `CI_API_V4_URL` 
 from Gitlab are used when running the cli commands.
 
 ```
-update-build-counter:
+update-build-vars:
   image: rueedlinger/gitlab-vars-cli
   script: 
-    - echo $CI_PROJECT_ID
-    - echo $CI_API_V4_URL
     - gitlab-vars incr BUILD_COUNTER
     - gitlab-vars timestamp BUILD_TIME
 ```
