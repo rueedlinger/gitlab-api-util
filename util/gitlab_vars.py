@@ -5,39 +5,51 @@ import click
 import requests
 from click import UsageError
 
+# default settings
 DEFAULT_GITLAB_URL = "https://gitlab.com/api/v4"
 DEFAULT_DATE_TIME_FORMAT = "%Y%m%d%H%M%S"
 
+# Gitalb CI/CD variables
+ENV_GITLAB_PROJECT_ID = "CI_PROJECT_ID"
+ENV_GITLAB_JOB_TOKEN = "CI_JOB_TOKEN"
+ENV_GITLAB_API_URL = "CI_API_V4_URL"
+
+# custom variables
+ENV_CUSTOM_TOKEN = "GITLAB_VARS_PERSONAL_TOKEN"
+ENV_CUSTOM_PROJECT_ID = "GITLAB_VARS_PROJECT_ID"
+ENV_CUSTOM_API_URL = "GITLAB_VARS_API_URL"
+
 
 def get_token():
-    if "GITLAB_TOKEN" in os.environ:
-        return os.environ["GITLAB_TOKEN"]
-    elif "CI_JOB_TOKEN" in os.environ:
-        return os.environ["CI_JOB_TOKEN"]
+    if ENV_CUSTOM_TOKEN in os.environ:
+        return "PRIVATE-TOKEN", os.environ[ENV_CUSTOM_TOKEN]
+    elif ENV_GITLAB_JOB_TOKEN in os.environ:
+        return "JOB-TOKEN", os.environ[ENV_GITLAB_JOB_TOKEN]
     else:
-        raise UsageError("env GITLAB_TOKEN is not set")
+        raise UsageError(f"Token not found. {ENV_CUSTOM_TOKEN} or {ENV_GITLAB_JOB_TOKEN} is not set")
 
 
 def get_project():
-    if "GITLAB_PROJECT_ID" in os.environ:
-        return os.environ["GITLAB_PROJECT_ID"]
-    elif "CI_PROJECT_ID" in os.environ:
-        return os.environ["CI_PROJECT_ID"]
+    if ENV_CUSTOM_PROJECT_ID in os.environ:
+        return os.environ[ENV_CUSTOM_PROJECT_ID]
+    elif ENV_GITLAB_PROJECT_ID in os.environ:
+        return os.environ[ENV_GITLAB_PROJECT_ID]
     else:
         return None
 
 
 def get_base_url():
-    if "GITLAB_URL_API" in os.environ:
-        return os.environ["GITLAB_URL_API"]
-    elif "CI_API_V4_URL" in os.environ:
-        return os.environ["CI_API_V4_URL"]
+    if ENV_CUSTOM_API_URL in os.environ:
+        return os.environ[ENV_CUSTOM_API_URL]
+    elif ENV_GITLAB_API_URL in os.environ:
+        return os.environ[ENV_GITLAB_API_URL]
     else:
         return DEFAULT_GITLAB_URL
 
 
 def get_headers():
-    return {"PRIVATE-TOKEN": get_token()}
+    token_type, token = get_token()
+    return {token_type: token}
 
 
 def get_var(project, variable):
@@ -61,9 +73,10 @@ def cli():
 
 @cli.command()
 def info():
-    unmasked = str(get_token)
-    masked = len(unmasked[:-5]) * "*" + unmasked[-5:]
+    toke_type, token = get_token()
+    masked = len(token[:-5]) * "*" + token[-5:]
     print(f"TOKEN (masked): {masked}")
+    print(f"TOKEN TYPE: {toke_type}")
     print(f"API URL: {get_base_url()}")
 
 
