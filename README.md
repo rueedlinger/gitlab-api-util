@@ -58,14 +58,17 @@ gitlab-vars timestamp BUILD
 ```
 
 ### Gitlab CI/CD Pipeline
-The following Gitalb CI/CD pipeline (`.gitlab-ci.yml `) will update the project variables `BUILD_COUNTER` and `BUILD_TIME`.
-In this example the job token `CI_JOB_TOKEN`, project id `$CI_PROJECT_ID` and API URL `CI_API_V4_URL` 
+The following Gitlab CI/CD pipeline (`.gitlab-ci.yml `) will update the project variables `BUILD_COUNTER` and `BUILD_TIME`.
+In this example the personal access token stores as variable `$API_TOKEN`, project id `$CI_PROJECT_ID` and API URL `CI_API_V4_URL` 
 from Gitlab are used when running the cli commands.
 
 ```
 update-build-vars:
   image: rueedlinger/gitlab-vars-cli
+  variables:
+    API_TOKEN: $API_TOKEN
   script: 
+    - gitlab-vars info
     - gitlab-vars incr BUILD_COUNTER
     - gitlab-vars timestamp BUILD_TIME
 ```
